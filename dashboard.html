@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BuildAI Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <style>
+    body {
+        background: linear-gradient(135deg,#0f172a,#0b1120);
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #ffffff;
+    }
+
+    h6 {
+        color: #cbd5e1;
+        font-weight: 600;
+    }
+
+    h4, h5 {
+        color: #ffffff;
+        font-weight: 800;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(18px);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.25);
+        transition: 0.4s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 0 35px rgba(0,255,255,0.4);
+    }
+
+    canvas {
+        height: 320px !important;
+    }
+
+    .ai-box {
+        background: linear-gradient(135deg,#1e293b,#0f172a);
+        border: 1px solid #22d3ee;
+        border-radius: 20px;
+        padding: 20px;
+        margin-top: 30px;
+        box-shadow: 0 0 20px rgba(34,211,238,0.4);
+    }
+
+    .highlight {
+        color: #22d3ee;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Project Dashboard</h2>
+
+    <!-- KPI CARDS -->
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+            <div class="card p-4 animate-chart">
+                <h6>Predicted Cost</h6>
+                <h4 id="costValue">0</h4>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 animate-chart">
+                <h6>Delay (Days)</h6>
+                <h4 id="delayValue">0</h4>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 animate-chart">
+                <h6>Completion Date</h6>
+                <h5>{{ completion }}</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 animate-chart">
+                <h6>Risk Score</h6>
+                <h4 id="riskValue">0%</h4>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RISK + COST -->
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="card p-4 animate-chart">
+                <h6>Risk Analysis</h6>
+                <canvas id="riskChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-4 animate-chart">
+                <h6>Cost Breakdown</h6>
+                <canvas id="costChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- WORKFORCE + TIME -->
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+            <div class="card p-4 animate-chart">
+                <h6>AI Workforce Allocation</h6>
+                <canvas id="workforceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-4 animate-chart">
+                <h6>Project Time Breakdown</h6>
+                <canvas id="timeChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="ai-box">
+    <h4>🤖 AI Workforce Insight</h4>
+    <p>
+        Based on project size, the recommended workforce required is:
+        <span class="highlight">{{ required_workers }}</span> workers.
+    </p>
+
+    <p>
+        Suggested Distribution:
+    </p>
+
+    <ul>
+        <li>👷 Engineers: <span class="highlight">{{ engineers }}</span></li>
+        <li>📋 Planners: <span class="highlight">{{ planners }}</span></li>
+        <li>🛠 Skilled Workers: <span class="highlight">{{ skilled_workers }}</span></li>
+        <li>🏗 Labor Workers: <span class="highlight">{{ labor_workers }}</span></li>
+        <li>🔎 Inspectors: <span class="highlight">{{ inspectors }}</span></li>
+    </ul>
+
+    <p class="mt-3">
+        AI Suggestion:
+        <span class="highlight">{{ recommendation }}</span>
+    </p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+   const cost = {{ cost|default(0)|tojson }};
+const delay = {{ delay|default(0)|tojson }};
+const risk = {{ risk|default(0)|tojson }};
+const material = {{ material|default(0)|tojson }};
+const labor = {{ labor|default(0)|tojson }};
+const equipment = {{ equipment|default(0)|tojson }};
+const misc = {{ misc|default(0)|tojson }};
+
+const engineers = {{ engineers|default(0)|tojson }};
+const planners = {{ planners|default(0)|tojson }};
+const skilled = {{ skilled_workers|default(0)|tojson }};
+const laborWorkers = {{ labor_workers|default(0)|tojson }};
+const inspectors = {{ inspectors|default(0)|tojson }};
+
+const planningTime = {{ planning_time|default(0)|tojson }};
+const engineeringTime = {{ engineering_time|default(0)|tojson }};
+const executionTime = {{ execution_time|default(0)|tojson }};
+const inspectionTime = {{ inspection_time|default(0)|tojson }};
+
+    // Animated Counter
+    function animateValue(id, end, suffix="") {
+        let start = 0;
+        let duration = 1500;
+        let increment = end / (duration / 16);
+        let obj = document.getElementById(id);
+
+        let timer = setInterval(function () {
+            start += increment;
+            if (start >= end) {
+                start = end;
+                clearInterval(timer);
+            }
+            obj.innerHTML = Math.floor(start).toLocaleString() + suffix;
+        }, 16);
+    }
+
+    animateValue("costValue", cost, " ₹");
+    animateValue("delayValue", delay);
+    animateValue("riskValue", risk, "%");
+
+    // Risk Chart
+    new Chart(document.getElementById("riskChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Risk", "Safe"],
+            datasets: [{
+                data: [risk, 100 - risk],
+                backgroundColor: ["#ef4444", "#22c55e"]
+            }]
+        }
+    });
+
+    // Cost Chart
+    new Chart(document.getElementById("costChart"), {
+        type: "bar",
+        data: {
+            labels: ["Material","Labor","Equipment","Misc"],
+            datasets: [{
+                data: [material,labor,equipment,misc],
+                backgroundColor:["#3b82f6","#f59e0b","#10b981","#ef4444"]
+            }]
+        }
+    });
+
+    // Workforce Chart
+    new Chart(document.getElementById("workforceChart"), {
+        type: "pie",
+        data: {
+            labels:["Engineers","Planners","Skilled","Labor","Inspectors"],
+            datasets:[{
+                data:[engineers,planners,skilled,laborWorkers,inspectors],
+                backgroundColor:["#3b82f6","#8b5cf6","#22c55e","#f59e0b","#ef4444"]
+            }]
+        }
+    });
+
+    // Time Chart
+    new Chart(document.getElementById("timeChart"), {
+        type:"bar",
+        data:{
+            labels:["Planning","Engineering","Execution","Inspection"],
+            datasets:[{
+                data:[planningTime,engineeringTime,executionTime,inspectionTime],
+                backgroundColor:["#8b5cf6","#3b82f6","#22c55e","#f59e0b"]
+            }]
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

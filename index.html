@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BuildAI | AI Construction Planning</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c3c);
+            background-size: 400% 400%;
+            animation: gradientMove 12s ease infinite;
+            overflow: hidden;
+            color: white;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 0 10%;
+        }
+
+        .text-section {
+            max-width: 500px;
+            animation: fadeInLeft 1.2s ease-out;
+        }
+
+        h1 {
+            font-size: 44px;
+            margin-bottom: 20px;
+            border-right: 3px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation: typing 3s steps(40,end) forwards;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 2s ease;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            background: linear-gradient(135deg,#00c6ff,#0072ff);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.4s;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .btn:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0,198,255,0.5); }
+            50% { box-shadow: 0 0 25px rgba(0,198,255,1); }
+            100% { box-shadow: 0 0 10px rgba(0,198,255,0.5); }
+        }
+
+        /* Building Animation */
+        .building {
+            position: relative;
+            width: 160px;
+            height: 300px;
+            background: #d1d5db;
+            border-radius: 8px;
+            animation: buildUp 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes buildUp {
+            from { height: 120px; }
+            to { height: 300px; }
+        }
+
+        .windows {
+            padding: 20px;
+        }
+
+        .window {
+            width: 20px;
+            height: 20px;
+            background: #2c5364;
+            margin: 10px;
+            display: inline-block;
+            animation: lightOn 3s infinite alternate;
+        }
+
+        @keyframes lightOn {
+            0% { background: #2c5364; }
+            100% { background: #00c6ff; }
+        }
+
+        /* Crane Hook Animation */
+        .crane {
+            position: absolute;
+            top: 50px;
+            right: 200px;
+            width: 3px;
+            height: 120px;
+            background: white;
+        }
+
+        .hook {
+            width: 20px;
+            height: 20px;
+            background: orange;
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            border-radius: 50%;
+            animation: hookMove 3s infinite alternate;
+        }
+
+        @keyframes hookMove {
+            from { transform: translateY(0px); }
+            to { transform: translateY(30px); }
+        }
+
+        /* Floating circles */
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            animation: float 8s infinite;
+        }
+
+        .circle:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 70%;
+        }
+
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            bottom: 15%;
+            left: 60%;
+        }
+        /* Ground */
+.ground {
+    position: absolute;
+    bottom: 0;
+    right: 8%;
+    width: 350px;
+    height: 80px;
+    background: linear-gradient(to top, #14532d, #166534);
+    border-radius: 50% 50% 0 0;
+}
+
+/* Tree */
+.tree {
+    position: absolute;
+    bottom: 80px;
+    right: 60px;
+    width: 30px;
+    height: 80px;
+}
+
+.tree .trunk {
+    width: 10px;
+    height: 40px;
+    background: #78350f;
+    margin: 0 auto;
+}
+
+.tree .leaves {
+    width: 60px;
+    height: 60px;
+    background: #16a34a;
+    border-radius: 50%;
+    position: relative;
+    top: -30px;
+    left: -15px;
+    animation: sway 4s ease-in-out infinite alternate;
+}
+
+/* Second tree */
+.tree2 {
+    right: 140px;
+    transform: scale(0.8);
+    animation-delay: 1s;
+}
+
+@keyframes sway {
+    from { transform: rotate(-3deg); }
+    to { transform: rotate(3deg); }
+}
+
+/* Shadow under building */
+.shadow {
+    position: absolute;
+    bottom: 75px;
+    right: 110px;
+    width: 120px;
+    height: 20px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    filter: blur(8px);
+}
+
+/* Birds animation */
+.bird {
+    position: absolute;
+    top: 80px;
+    left: -100px;
+    font-size: 24px;
+    animation: fly 15s linear infinite;
+}
+/* NIGHT MODE */
+body.night {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    transition: background 1.5s ease;
+}
+
+/* Stars */
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+body.night .stars {
+    opacity: 1;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+}
+
+/* Building windows glow at night */
+body.night .window {
+    background: #facc15;
+    box-shadow: 0 0 10px #facc15;
+}
+
+/* Moon */
+.moon {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 80px;
+    height: 80px;
+    background: #f8fafc;
+    border-radius: 50%;
+    box-shadow: 0 0 40px white;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+body.night .moon {
+    opacity: 1;
+}
+
+@keyframes fly {
+    from { transform: translateX(0); }
+    to { transform: translateX(120vw); }
+}
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-25px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+
+<body id="pageBody">
+
+<div class="circle"></div>
+<div class="circle"></div>
+<div class="stars">
+    <div class="star" style="top:20%;left:30%"></div>
+    <div class="star" style="top:35%;left:60%"></div>
+    <div class="star" style="top:50%;left:75%"></div>
+    <div class="star" style="top:25%;left:80%"></div>
+    <div class="star" style="top:60%;left:40%"></div>
+    <div class="star" style="top:70%;left:20%"></div>
+    <div class="star" style="top:45%;left:10%"></div>
+</div>
+
+<div class="moon"></div>
+
+<div class="crane" onclick="toggleNight()">
+    <div class="hook"></div>
+</div>
+
+<div class="container">
+
+    <div class="text-section">
+        <h1>AI Powered Construction Planning</h1>
+        <p>
+            Generate smart project timelines, optimize resources,
+            and predict risks using advanced AI models.
+        </p>
+        <a href="/create">
+            <button class="btn">Create Project 🚀</button>
+        </a>
+    </div>
+
+    <div class="building">
+        <div class="shadow"></div>
+
+<div class="tree">
+    <div class="leaves"></div>
+    <div class="trunk"></div>
+</div>
+
+<div class="tree tree2">
+    <div class="leaves"></div>
+    <div class="trunk"></div>
+</div>
+
+<div class="ground"></div>
+
+<div class="bird">🐦</div>
+        <div class="windows">
+            <div class="window"></div>
+            <div class="window"></div>
+            <div class="window"></div>
+            <div class="window"></div>
+            <div class="window"></div>
+            <div class="window"></div>
+        </div>
+    </div>
+
+</div>
+<script>
+function toggleNight() {
+    document.getElementById("pageBody").classList.toggle("night");
+}
+</script>
+
+</body>
+</html>
